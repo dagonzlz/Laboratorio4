@@ -24,43 +24,49 @@ void allocateMatrix(int ***matrix, int size) {
 // - int *result: Puntero donde se almacenar[a la longitud de la secuencia mas larga de 1s.
 // Retorno:
 // - No retorna un valor, pero modifica el valor en `result`.
-//
 void findLargestLine(int **matrix, int size, int *result) {
-    *result = 0; // Iniciar el resultado a 0
-    int largo_max = 0;
-    int largo = 0;
+    *result = 0;  // Inicializa el resultado a 0
+    int largo_max = 0;  // Longitud maxima de la secuencia encontrada
+    int largo = 0;  // Longitud actual de la secuencia de 1s
 
     for (int i = 0; i < size; i++) {
+        // Contar 1s en la fila actual
         for (int j = 0; j < size; j++) {
-            if (*(*(matrix + i) + j) == 1) {
-                largo++; // Contamos 1s consecutivos
+            if (matrix[i][j] == 1) {
+                largo++;  // Incrementar la longitud actual
             } else {
-                largo = 0; // Reiniciar si encontramos un 0
+                largo = 0;  // Reiniciar la longitud si se encuentra un 0
             }
-            if (largo > largo_max) {
-                largo_max = largo; // Actualizamos el max si encontramos uno mayor
-            }
-       }
 
-        // Correccion del lab3: continuar la secuencia en la siguiente fila si termina en 1 y la próxima fila empieza en 1
-        if (*(*(matrix + i) + size - 1) == 1 && i < size - 1 && *(*(matrix + i + 1) + 0) == 1) {
-            largo++;
-            for (int k = 1; k < size; k++) {
-                if (*(*(matrix + i + 1) + k) == 1) {
-                    largo++;
-                } else {
-                    break;
-                }
-            }
+            // Actualizar la longitud maxima si se encuentra una secuencia maas larga
             if (largo > largo_max) {
                 largo_max = largo;
             }
         }
-        largo = 0; // Reiniciar el contador para la siguiente fila
+
+        // Manejo de la continuidad entre filas
+        if (i < size - 1 && matrix[i][size - 1] == 1 && matrix[i + 1][0] == 1) {
+            // Contar la longitud de 1s en la siguiente fila
+            int siguiente_largo = 0;
+            for (int k = 0; k < size; k++) {
+                if (matrix[i + 1][k] == 1) {
+                    siguiente_largo++;  // Contar 1s en la fila siguiente
+                } else {
+                    break;  // Detenerse al encontrar un 0
+                }
+            }
+            // Sumar la longitud de la fila actual y la siguiente
+            largo_max += siguiente_largo;  
+        }
+
+       
+        largo = 0;  
     }
 
-    *result = largo_max; // Guardamos el resultado en la variable apuntada por result
+    *result = largo_max;  // Almacenar el resultado final
 }
+
+
 // Funcion para llenar la matriz con numeros aleatorios.
 // Params:
 // - int **matrix: Puntero a la matriz a llenar.
